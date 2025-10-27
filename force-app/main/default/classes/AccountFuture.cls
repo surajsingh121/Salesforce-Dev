@@ -8,6 +8,7 @@ public class AccountFuture {
             acc.AccountNumber ='1234566789'+count++;
         }
         if(!accList.isEmpty()){
+            System.debug('Updating Account Numbers in Future Method');
             update accList;
         }
     }
