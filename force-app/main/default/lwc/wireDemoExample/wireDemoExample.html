@@ -1,0 +1,24 @@
+<template>
+    <lightning-card title="Wire Demo" icon-name="custom:custom14" class="home">
+        <template if:true={data}>
+            <lightning-datatable
+                key-field="Id"
+                data={data}
+                columns={columns}
+                hide-checkbox-column="true">
+            </lightning-datatable>
+        </template>
+        <template if:true={error}>
+            <div class="slds-text-color_error">{error}</div>
+        </template>
+    </lightning-card>
+    <lightning-avatar src="https://v1.lightningdesignsystem.com/assets/images/avatar2.jpg"></lightning-avatar>
+
+    <lightning-button
+        variant="brand"
+        label="Refresh Data"
+        title="Refresh Data"
+        onclick={handleRefresh}
+        class="slds-m-top_medium">
+    </lightning-button>
+</template>

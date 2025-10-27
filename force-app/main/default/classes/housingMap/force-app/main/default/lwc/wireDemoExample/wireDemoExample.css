@@ -1,0 +1,19 @@
+.home{
+    background-color: #7fa8e649;
+    padding: 20px;
+    text-align: center;
+    color: black;
+    height: 200px;
+    border-radius: 10px;
+}
+.home:hover{
+    background-color: #7fa8e6;
+    color: tomato;
+}
+.home h2{
+    margin-bottom: 20px;;
+
+}
+.slds-m-top_medium{
+    box-shadow: 10px 10px 5px #888888;
+}
