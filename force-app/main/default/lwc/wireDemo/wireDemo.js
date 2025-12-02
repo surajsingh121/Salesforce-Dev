@@ -17,6 +17,7 @@ export default class WireDemo extends LightningElement {
       wiredData({error,data}) {
         if(data){
             this.data=data;
+            console.log(data);
         }else if(error){
             console.log(error);
         }
