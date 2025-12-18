@@ -1,0 +1,262 @@
+<template>
+    <lightning-card>
+
+        <!-- HEADER -->
+        <div class="slds-p-horizontal_small slds-p-vertical_x-small">
+            <div class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center">
+
+                <!-- LEFT -->
+                <div class="slds-text-heading_small slds-grid slds-align-middle">
+                    <lightning-icon icon-name="standard:case" size="small"
+                        class="slds-m-right_x-small"></lightning-icon>
+                    <span>Cases</span>
+                </div>
+
+                <!-- RIGHT -->
+                <div class="slds-grid slds-gutters_x-small slds-align-middle">
+                    <lightning-input
+                        type="search"
+                        variant="label-hidden"
+                        placeholder="Search this list..."
+                        onchange={handleSearch}>
+                    </lightning-input>
+
+                    <lightning-button
+                        variant="destructive"
+                        label="Crear nuevo caso"
+                        onclick={openModal}>
+                    </lightning-button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DATA TABLE -->
+        <lightning-datatable
+            key-field="Id"
+            data={filteredData}
+            columns={columns}
+            hide-checkbox-column>
+        </lightning-datatable>
+
+    </lightning-card>
+
+    <!-- 🔹 FIRST MODAL -->
+    <template if:true={isModalOpen}>
+        <section class="custom-modal">
+            <div class="modal-container">
+
+                <header class="modal-header">
+                    <h2>Crear nuevo caso</h2>
+                    <button class="close-btn" onclick={closeModal}>✕</button>
+                </header>
+
+                <div class="modal-body">
+                    <h3>Búsqueda de cliente</h3>
+
+                    <div class="form-grid">
+                        <lightning-input label="Número de pedido"></lightning-input>
+                        <lightning-input label="Correo electrónico"></lightning-input>
+                        <lightning-input label="Teléfono"></lightning-input>
+
+                        <div class="search-btn">
+                            <lightning-button
+                                label="Buscar"
+                                variant="destructive"
+                                onclick={handleBuscar}>
+                            </lightning-button>
+                        </div>
+                    </div>
+
+                    <!-- RESULT TABLE -->
+                    <template if:true={showTable}>
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>No. de pedido</th>
+                                    <th>SKU</th>
+                                    <th>Descripción</th>
+                                    <th>Cliente</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={orderList} for:item="item">
+                                    <tr key={item.id}
+                                        class="row-click"
+                                        data-id={item.id}
+                                        onclick={openDetailModal}>
+                                        <td>{item.orderNo}</td>
+                                        <td>{item.sku}</td>
+                                        <td>{item.description}</td>
+                                        <td>{item.client}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </div>
+
+            </div>
+        </section>
+        <div class="modal-backdrop"></div>
+    </template>
+
+    <!--  SECOND DETAIL MODAL -->
+    <template if:true={isDetailModalOpen}>
+        <section class="custom-modal">
+            <div class="modal-container small">
+
+                <header class="modal-header">
+                    <h2>Detalle del pedido</h2>
+                    <button class="close-btn" onclick={closeDetailModal}>✕</button>
+                </header>
+
+                <div class="modal-body detail">
+                    <p><b>No. de pedido:</b> {selectedOrder.orderNo}</p>
+                    <p><b>SKU:</b> {selectedOrder.sku}</p>
+                    <p><b>Descripción:</b> {selectedOrder.description}</p>
+                    <p><b>Cliente:</b> {selectedOrder.client}</p>
+                </div>
+
+                <footer class="modal-footer">
+                    <lightning-button
+                        label="Cerrar"
+                        variant="destructive"
+                        onclick={closeDetailModal}>
+                    </lightning-button>
+                </footer>
+
+            </div>
+        </section>
+        <div class="modal-backdrop"></div>
+    </template>
+
+
+<!-- my second modal -->
+
+    <!-- SEARCH RESULT TABLE -->
+    <template if:true={showTable}>
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>No. Pedido</th>
+                    <th>SKU</th>
+                    <th>Descripción</th>
+                    <th>Cliente</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={orderList} for:item="item">
+                    <tr key={item.id}
+                        class="row-click"
+                        data-id={item.id}
+                        onclick={handleRowClick}>
+                        <td>{item.orderNo}</td>
+                        <td>{item.sku}</td>
+                        <td>{item.description}</td>
+                        <td>{item.client}</td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </template>
+
+    <!--  DETAIL MODAL (STEP 2) -->
+    <template if:true={isDetailModalOpen}>
+        <section class="custom-modal">
+            <div class="modal-container">
+
+                <!-- HEADER -->
+                <header class="modal-header">
+                    <div>
+                        <h2>Crear nuevo caso</h2>
+                        <span class="step">Paso 2 de 4</span>
+                    </div>
+                    <button class="close-btn" onclick={closeDetailModal}>✕</button>
+                </header>
+
+                <!-- BODY -->
+                <div class="modal-body">
+                    <h3 class="section-title">Detalles del caso</h3>
+
+                    <div class="form-grid">
+
+                        <!-- LEFT -->
+                        <div>
+                            <lightning-input
+                                label="Cliente"
+                                value={selectedRecord.client}
+                                disabled>
+                            </lightning-input>
+
+                            <lightning-input
+                                label="SKU"
+                                value={selectedRecord.sku}
+                                disabled>
+                            </lightning-input>
+
+                            <lightning-input
+                                label="Piezas a modificar"
+                                type="number"
+                                value="2">
+                            </lightning-input>
+
+                            <lightning-combobox
+                                label="Motivo"
+                                placeholder="Selecciona una opción"
+                                options={motivoOptions}>
+                            </lightning-combobox>
+                        </div>
+
+                        <!-- RIGHT -->
+                        <div>
+                            <lightning-input
+                                label="Piezas"
+                                value="2"
+                                disabled>
+                            </lightning-input>
+
+                            <lightning-input
+                                label="Descripción"
+                                value={selectedRecord.description}
+                                disabled>
+                            </lightning-input>
+
+                            <lightning-combobox
+                                label="Subcategoría"
+                                placeholder="Selecciona una opción"
+                                options={subcategoriaOptions}>
+                            </lightning-combobox>
+                        </div>
+
+                    </div>
+
+                    <lightning-textarea
+                        label="Descripción"
+                        value="El cliente necesita un reemplazo de su producto porque su hijo de 5 años lo rompió.">
+                    </lightning-textarea>
+                </div>
+
+                <!-- FOOTER -->
+                <footer class="modal-footer">
+                    <lightning-button
+                        label="Regresar"
+                        variant="neutral"
+                        onclick={closeDetailModal}>
+                    </lightning-button>
+
+                    <lightning-button
+                        label="Siguiente"
+                        variant="destructive">
+                    </lightning-button>
+                </footer>
+
+            </div>
+        </section>
+
+        <div class="modal-backdrop"></div>
+    </template>
+
+
+
+
+</template>
