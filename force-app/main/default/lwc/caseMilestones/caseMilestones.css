@@ -1,0 +1,11 @@
+.datatable-container {
+    min-height: 120px;
+}
+
+.slds-card {
+    width: 100%;
+}
+
+.slds-text-color_error {
+    white-space: pre-wrap;
+}
